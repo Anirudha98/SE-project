@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const catalogRoutes = require("./routes/catalogRoutes");
+const cartRoutes = require("./routes/cartRoutes");
 
 // Middleware
 app.use(cors());
@@ -9,6 +10,7 @@ app.use(express.json());
 
 // API endpoints
 app.use("/api/catalog", catalogRoutes);
+app.use("/api/cart", cartRoutes);
 
 // Default server port
 const PORT = process.env.PORT || 5000;

@@ -1,0 +1,20 @@
+{
+  "name": "handcrafted-marketplace",
+  "version": "1.0.0",
+  "description": "Online Marketplace for Handcrafted Goods - PESU RR AIML A P30 Breaking-Code",
+  "main": "src/backend/app.js",
+  "scripts": {
+    "start": "node src/backend/app.js",
+    "test": "jest --runInBand --detectOpenHandles"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.1.1"
+  }
+}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getProducts } from "../services/api";
+import ProductCard from "../components/ProductCard";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -15,26 +16,7 @@ const ProductList = () => {
       <h2>Available Products</h2>
       <div style={{ display: "flex", flexWrap: "wrap" }}>
         {products.map((p) => (
-          <div
-            key={p.id}
-            style={{
-              border: "1px solid #ccc",
-              borderRadius: "10px",
-              margin: "10px",
-              padding: "15px",
-              width: "220px",
-              textAlign: "center",
-            }}
-          >
-            <img
-              src={p.imageUrl}
-              alt={p.name}
-              style={{ width: "100%", borderRadius: "10px" }}
-            />
-            <h3>{p.name}</h3>
-            <p>₹{p.price}</p>
-            <p><i>{p.artisanName}</i></p>
-          </div>
+          <ProductCard key={p.id} product={p} />
         ))}
       </div>
     </div>

@@ -11,7 +11,7 @@ const ProductDetail = () => {
   useEffect(() => {
     getProducts()
       .then((data) => {
-        const found = data.find((p) => p.id === parseInt(id));
+        const found = data.find((p) => p.id === parseInt(id, 10));
         setProduct(found);
       })
       .catch((err) => console.error("Error fetching product:", err));
@@ -28,7 +28,7 @@ const ProductDetail = () => {
       />
       <h2>{product.name}</h2>
       <p>{product.description}</p>
-      <h3>₹{product.price}</h3>
+      <h3>${Number(product.price).toFixed(2)}</h3>
       <p>By: {product.artisanName}</p>
       <button
         onClick={() => addToCart(product)}

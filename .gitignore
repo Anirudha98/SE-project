@@ -1,0 +1,12 @@
+# Ignore dependencies and build artifacts
+node_modules/
+coverage/
+*.log
+*.zip
+*.7z
+build/
+artifact.zip
+invoice_*.pdf
+# Env files
+.env
+

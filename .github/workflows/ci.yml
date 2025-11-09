@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Install backend dependencies
+        run: npm install --prefix src/backend
+
+      - name: Install frontend dependencies
+        run: npm install --prefix src/frontend
+
+      - name: Lint backend
+        run: npm run lint --prefix src/backend
+
+      - name: Lint frontend
+        run: npm run lint --prefix src/frontend
+
+      - name: Test backend with coverage
+        run: |
+          set -o pipefail
+          npm test --prefix src/backend | tee backend-tests.log
+
+      - name: Test frontend with coverage
+        env:
+          CI: true
+        run: |
+          set -o pipefail
+          npm test --prefix src/frontend -- --coverage --watchAll=false | tee frontend-tests.log
+
+      - name: Collect test & coverage artifacts
+        if: always()
+        run: |
+          mkdir -p artifacts
+          if [ -f backend-tests.log ]; then mv backend-tests.log artifacts/backend-tests.log; fi
+          if [ -f frontend-tests.log ]; then mv frontend-tests.log artifacts/frontend-tests.log; fi
+          if [ -d src/backend/coverage ]; then zip -r artifacts/backend-coverage.zip src/backend/coverage; fi
+          if [ -d src/frontend/coverage ]; then zip -r artifacts/frontend-coverage.zip src/frontend/coverage; fi
+
+      - name: Build frontend
+        run: npm run build --prefix src/frontend
+
+      - name: Package frontend build
+        run: |
+          cd src/frontend
+          zip -r ../../artifact.zip build
+
+      - name: Upload frontend build
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: artifact.zip
+
+      - name: Upload test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs
+          path: |
+            artifacts/backend-tests.log
+            artifacts/frontend-tests.log
+          if-no-files-found: ignore
+
+      - name: Upload coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            artifacts/backend-coverage.zip
+            artifacts/frontend-coverage.zip
+          if-no-files-found: ignore

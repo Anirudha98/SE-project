@@ -20,7 +20,11 @@ const Product = sequelize.define('Product', {
   },
   stock: {
     type: DataTypes.INTEGER,
+    allowNull: false,
     defaultValue: 0,
+    validate: {
+      min: 0,
+    },
   },
   imageUrl: {
     type: DataTypes.STRING,

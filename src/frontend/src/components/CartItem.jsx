@@ -12,7 +12,9 @@ const CartItem = ({ item, removeFromCart }) => (
   >
     <div>
       <h4>{item.name}</h4>
-      <p>₹{item.price} × {item.qty}</p>
+      <p>
+        ${Number(item.price).toFixed(2)} x {item.qty}
+      </p>
     </div>
     <button
       onClick={() => removeFromCart(item.id)}

@@ -5,26 +5,10 @@ import "./ProductList.css";
 
 const vibeFilters = [
   { id: "all", label: "All artistry" },
-  {
-    id: "statement",
-    label: "Statement pieces",
-    predicate: ({ price }) => price >= 150,
-  },
-  {
-    id: "giftable",
-    label: "Giftable finds",
-    predicate: ({ price }) => price > 0 && price <= 60,
-  },
-  {
-    id: "limited",
-    label: "Limited stock",
-    predicate: ({ stock }) => stock > 0 && stock <= 5,
-  },
-  {
-    id: "made-to-order",
-    label: "Made to order",
-    predicate: ({ stock }) => stock === 0,
-  },
+  { id: "statement", label: "Statement pieces", predicate: ({ price }) => price >= 150 },
+  { id: "giftable", label: "Giftable finds", predicate: ({ price }) => price > 0 && price <= 60 },
+  { id: "limited", label: "Limited stock", predicate: ({ stock }) => stock > 0 && stock <= 5 },
+  { id: "made-to-order", label: "Made to order", predicate: ({ stock }) => stock === 0 },
 ];
 
 const priceFilters = [
@@ -62,23 +46,25 @@ const ProductList = () => {
   useEffect(() => {
     let mounted = true;
     setLoading(true);
-    getProducts()
-      .then((data) => {
-        if (mounted) {
-          setProducts(Array.isArray(data) ? data : []);
-        }
-      })
-      .catch((err) => console.error("Error fetching products:", err))
-      .finally(() => {
-        if (mounted) {
-          setLoading(false);
-        }
-      });
 
+    // 🔍 If searchQuery exists, call backend search endpoint
+    const fetchProducts = async () => {
+      try {
+        const data = await getProducts(searchQuery);
+        if (mounted) setProducts(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        if (mounted) setProducts([]);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchProducts();
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [searchQuery]);
 
   const sortStrategies = {
     featured: (a, b) => (Number(b.stock ?? 0) || 0) - (Number(a.stock ?? 0) || 0),
@@ -88,19 +74,10 @@ const ProductList = () => {
   };
 
   const filteredProducts = useMemo(() => {
-    const searchValue = searchQuery.trim().toLowerCase();
     const vibeConfig = vibeFilters.find((filter) => filter.id === activeVibe);
-
     const subset = products.filter((product) => {
       const price = Number(product.price ?? 0);
-      const stock = Number.isFinite(Number(product.stock)) ? Number(product.stock) : 0;
-      const searchableText = `${product.name ?? ""} ${product.description ?? ""} ${
-        product.artisanName ?? ""
-      }`.toLowerCase();
-
-      if (searchValue && !searchableText.includes(searchValue)) {
-        return false;
-      }
+      const stock = Number(product.stock ?? 0);
 
       switch (priceFilter) {
         case "under-50":
@@ -133,31 +110,21 @@ const ProductList = () => {
 
     const sorter = sortStrategies[sortBy] || sortStrategies.featured;
     return [...subset].sort(sorter);
-  }, [products, searchQuery, priceFilter, stockFilter, sortBy, activeVibe]);
+  }, [products, priceFilter, stockFilter, sortBy, activeVibe]);
 
   const stats = useMemo(() => {
     if (!products.length) {
-      return {
-        total: 0,
-        readyToShip: 0,
-        uniqueArtisans: 0,
-        averagePrice: 0,
-      };
+      return { total: 0, readyToShip: 0, uniqueArtisans: 0, averagePrice: 0 };
     }
 
-    const readyToShip = products.filter((product) => Number(product.stock ?? 0) > 0).length;
+    const readyToShip = products.filter((p) => Number(p.stock ?? 0) > 0).length;
     const uniqueArtisans = new Set(
-      products.map((product) => product.artisanName || "Independent Artisan"),
+      products.map((p) => p.artisanName || "Independent Artisan")
     ).size;
     const averagePrice =
-      products.reduce((sum, product) => sum + Number(product.price ?? 0), 0) / products.length;
+      products.reduce((sum, p) => sum + Number(p.price ?? 0), 0) / products.length;
 
-    return {
-      total: products.length,
-      readyToShip,
-      uniqueArtisans,
-      averagePrice,
-    };
+    return { total: products.length, readyToShip, uniqueArtisans, averagePrice };
   }, [products]);
 
   const activeFilters = useMemo(() => {
@@ -189,38 +156,19 @@ const ProductList = () => {
             <p>Discover limited batches handmade by artisans from across the country.</p>
           </div>
           <div className="product-hero__stats">
-            <div className="product-hero__stat">
-              <span>{stats.total}</span>
-              <p>Original pieces</p>
-            </div>
-            <div className="product-hero__stat">
-              <span>{stats.readyToShip}</span>
-              <p>Ready to ship</p>
-            </div>
-            <div className="product-hero__stat">
-              <span>{stats.uniqueArtisans}</span>
-              <p>Artisans featured</p>
-            </div>
-            <div className="product-hero__stat">
-              <span>${stats.averagePrice.toFixed(0)}</span>
-              <p>Avg. price</p>
-            </div>
+            <div className="product-hero__stat"><span>{stats.total}</span><p>Original pieces</p></div>
+            <div className="product-hero__stat"><span>{stats.readyToShip}</span><p>Ready to ship</p></div>
+            <div className="product-hero__stat"><span>{stats.uniqueArtisans}</span><p>Artisans featured</p></div>
+            <div className="product-hero__stat"><span>${stats.averagePrice.toFixed(0)}</span><p>Avg. price</p></div>
           </div>
         </div>
 
         <form
           className="product-search"
-          onSubmit={(event) => {
-            event.preventDefault();
-          }}
+          onSubmit={(e) => e.preventDefault()}
         >
           <div className="product-search__input">
-            <svg
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              aria-hidden="true"
-            >
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
               <path
                 d="M10 3a7 7 0 0 1 5.59 11.16l4.12 4.11a1 1 0 0 1-1.42 1.42l-4.11-4.12A7 7 0 1 1 10 3zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"
                 fill="currentColor"
@@ -230,7 +178,7 @@ const ProductList = () => {
               type="search"
               placeholder="Search by artisan, material, or mood..."
               value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <button
@@ -260,51 +208,33 @@ const ProductList = () => {
         </div>
 
         <div className="product-toolbar__controls">
-          <select
-            className="product-select"
-            value={priceFilter}
-            onChange={(event) => setPriceFilter(event.target.value)}
-          >
-            {priceFilters.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
+          <select className="product-select" value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)}>
+            {priceFilters.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
-          <select
-            className="product-select"
-            value={stockFilter}
-            onChange={(event) => setStockFilter(event.target.value)}
-          >
-            {stockFilters.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
+          <select className="product-select" value={stockFilter} onChange={(e) => setStockFilter(e.target.value)}>
+            {stockFilters.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
-          <select
-            className="product-select"
-            value={sortBy}
-            onChange={(event) => setSortBy(event.target.value)}
-          >
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
+          <select className="product-select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+            {sortOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
           <div className="product-view-toggle" role="group" aria-label="View mode">
             {[
               { id: "grid", label: "Grid" },
               { id: "list", label: "Showcase" },
-            ].map((option) => (
+            ].map((opt) => (
               <button
-                key={option.id}
+                key={opt.id}
                 type="button"
-                className={viewMode === option.id ? "is-active" : ""}
-                onClick={() => setViewMode(option.id)}
+                className={viewMode === opt.id ? "is-active" : ""}
+                onClick={() => setViewMode(opt.id)}
               >
-                {option.label}
+                {opt.label}
               </button>
             ))}
           </div>
@@ -314,8 +244,8 @@ const ProductList = () => {
       <section>
         {loading ? (
           <div className="product-grid">
-            {renderSkeletons.map((_, index) => (
-              <div className="product-skeleton" key={`skeleton-${index}`}>
+            {renderSkeletons.map((_, i) => (
+              <div className="product-skeleton" key={`skeleton-${i}`}>
                 <div className="product-skeleton__image" />
                 <div className="product-skeleton__text" />
                 <div className="product-skeleton__text short" />
@@ -332,9 +262,7 @@ const ProductList = () => {
           <div className="product-empty">
             <h3>No pieces match your selection</h3>
             <p>Try a different artisan, reset the filters, or explore another vibe.</p>
-            <button type="button" onClick={handleResetFilters}>
-              Reset filters
-            </button>
+            <button type="button" onClick={handleResetFilters}>Reset filters</button>
           </div>
         )}
       </section>

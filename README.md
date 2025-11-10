@@ -45,7 +45,7 @@ This repository contains the source code and documentation for the Online Market
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/Anirudha98/SE-project-.git
+   git clone https://github.com/Anirudha98/SE-project.git
    cd SE-project-
    ```
 

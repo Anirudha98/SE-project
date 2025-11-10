@@ -190,3 +190,18 @@ exports.getInvoice = async (req, res) => {
     res.status(status).json({ message: error.message || 'Could not generate invoice' });
   }
 };
+
+exports.getOrderHistory = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const orders = await Order.findAll({
+      where: { UserId: userId },
+      include: OrderItem,
+      order: [["createdAt", "DESC"]],
+    });
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch order history" });
+  }
+};
+

@@ -51,14 +51,7 @@ This repository contains the source code and documentation for the Online Market
 
 2. **Start MySQL Database (Docker)**
    ```bash
-   docker run -d --name mysql-handcraft \
-     -e MYSQL_ROOT_PASSWORD=rootpass \
-     -e MYSQL_DATABASE=handcrafted_db \
-     -e MYSQL_USER=dbuser \
-     -e MYSQL_PASSWORD=dbpass \
-     -p 3307:3306 \
-     --default-authentication-plugin=mysql_native_password \
-     mysql:8.0
+   docker run -d --name mysql-handcraft -e MYSQL_ROOT_PASSWORD=rootpass -e MYSQL_DATABASE=handcrafted_db -e MYSQL_USER=dbuser -e MYSQL_PASSWORD=dbpass -p 3307:3306 mysql:8.0 --default-authentication-plugin=mysql_native_password
    ```
 
 3. **Setup Backend**

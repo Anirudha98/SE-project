@@ -6,6 +6,7 @@ const applyAssociations = require('./src/models/associations');
 const productRoutes = require('./src/routes/productRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const orderRoutes = require('./src/routes/orderRoutes');
+const dashboardRoutes = require("./src/routes/dashboardRoutes");
 
 dotenv.config();
 const app = express();
@@ -21,6 +22,7 @@ app.get('/', (req, res) => res.send('Welcome to Handcrafted Marketplace API'));
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 const startServer = async () => {
   try {

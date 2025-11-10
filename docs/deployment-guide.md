@@ -13,7 +13,7 @@
 **Windows (PowerShell):**
 ```powershell
 # Clone and setup everything
-git clone https://github.com/your-org/SE-project.git; cd SE-project; docker run -d --name mysql-handcraft -e MYSQL_ROOT_PASSWORD=rootpass -e MYSQL_DATABASE=handcrafted_db -e MYSQL_USER=dbuser -e MYSQL_PASSWORD=dbpass -p 3307:3306 --default-authentication-plugin=mysql_native_password mysql:8.0; cd src/backend; npm install; Start-Process -NoNewWindow node server.js; cd ../frontend; npm install; npm start
+git clone https://github.com/your-org/SE-project.git; cd SE-project; docker run -d --name mysql-handcraft -e MYSQL_ROOT_PASSWORD=rootpass -e MYSQL_DATABASE=handcrafted_db -e MYSQL_USER=dbuser -e MYSQL_PASSWORD=dbpass -p 3307:3306 --default-authentication-plugin=mysql_native_password mysql:8.0; cd src/backend; Copy-Item .env.example .env -Force; npm install; Start-Process -NoNewWindow node server.js; cd ../frontend; npm install; npm start
 ```
 
 **Linux/Mac (Bash):**
@@ -29,7 +29,7 @@ docker run -d --name mysql-handcraft \
   -p 3307:3306 \
   --default-authentication-plugin=mysql_native_password \
   mysql:8.0 && \
-cd src/backend && npm install && node server.js & \
+cd src/backend && cp .env.example .env && npm install && node server.js & \
 cd ../frontend && npm install && npm start
 ```
 
@@ -107,21 +107,20 @@ This installs:
 - cors (2.8.5)
 - dotenv (16.4.7)
 
-**Configure Environment (Optional):**
+**Configure Environment:**
 
-Create `.env` file if you need custom settings:
+Copy the example environment file (required for DB credentials) and update values if your setup differs:
 ```bash
-# Database
+cp .env.example .env  # PowerShell: Copy-Item .env.example .env -Force
+```
+Default values for the bundled Docker MySQL instance:
+```
 DB_HOST=localhost
 DB_PORT=3307
 DB_NAME=handcrafted_db
 DB_USER=dbuser
 DB_PASSWORD=dbpass
-
-# JWT Secret
 JWT_SECRET=your-super-secret-jwt-key-change-in-production
-
-# Server
 PORT=5000
 ```
 

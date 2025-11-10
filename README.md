@@ -1,5 +1,7 @@
 # Online Marketplace for Handcrafted Goods
 
+![CI](https://github.com/Anirudha98/SE-project-/actions/workflows/ci.yml/badge.svg?branch=develop)
+
 **Project ID:** P30  
 **Course:** UE23CS341A  
 **Academic Year:** 2025  
@@ -35,24 +37,49 @@ This repository contains the source code and documentation for the Online Market
 ## 🚀 Getting Started
 
 ### Prerequisites
-- [List your prerequisites here]
+- Node.js 18+ installed
+- Docker Desktop installed and running
+- Git installed
 
-### Installation
-1. Clone the repository
+### Quick Setup
+
+1. **Clone the repository**
    ```bash
-   git clone https://github.com/pestechnology/PESU_RR_AIML_A_P30_Online_Marketplace_for_Handcrafted_Goods_Breaking-Code.git
-   cd PESU_RR_AIML_A_P30_Online_Marketplace_for_Handcrafted_Goods_Breaking-Code
+   git clone https://github.com/Anirudha98/SE-project-.git
+   cd SE-project-
    ```
 
-2. Install dependencies
+2. **Start MySQL Database (Docker)**
    ```bash
-   # Add your installation commands here
+   docker run -d --name mysql-handcraft \
+     -e MYSQL_ROOT_PASSWORD=rootpass \
+     -e MYSQL_DATABASE=handcrafted_db \
+     -e MYSQL_USER=dbuser \
+     -e MYSQL_PASSWORD=dbpass \
+     -p 3307:3306 \
+     --default-authentication-plugin=mysql_native_password \
+     mysql:8.0
    ```
 
-3. Run the application
+3. **Setup Backend**
    ```bash
-   # Add your run commands here
+   cd src/backend
+   npm install
+   node server.js
    ```
+
+4. **Setup Frontend** (in new terminal)
+   ```bash
+   cd src/frontend
+   npm install
+   npm start
+   ```
+
+5. **Access Application**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:5000/api
+
+📖 **For detailed setup instructions, see [Deployment Guide](docs/deployment-guide.md)**
 
 ## 📁 Project Structure
 
@@ -92,19 +119,43 @@ Follow conventional commit format:
 
 ## 📚 Documentation
 
-- [API Documentation](docs/api.md)
-- [User Guide](docs/user-guide.md)
-- [Developer Guide](docs/developer-guide.md)
+- [API Endpoints](docs/api-endpoints.md) - Complete API reference
+- [System Architecture](docs/system-architecture.md) - Architecture diagrams and design
+- [Deployment Guide](docs/deployment-guide.md) - Setup and deployment instructions
+- [Sprint 3 Demo Report](docs/sprint3-demo-report.md) - Latest sprint deliverables
 
 ## 🧪 Testing
 
 ```bash
-# Run tests
+# Backend tests
+cd src/backend
 npm test
 
-# Run tests with coverage
-npm run test:coverage
+# Frontend tests
+cd src/frontend
+npm test
+
+# Run with coverage
+npm test -- --coverage
 ```
+
+## ✨ Features
+
+- 🔐 **User Authentication** - JWT-based login/register
+- 🛍️ **Product Catalog** - Browse handcrafted items
+- 🛒 **Shopping Cart** - Add items and checkout
+- 📦 **Order Management** - Track orders and history
+- 📄 **Invoice Generation** - Downloadable PDF invoices
+- 🎨 **Modern UI** - Gradient navbar with cart badge
+- ✅ **CI/CD Pipeline** - Automated testing and builds
+
+## 🔧 Tech Stack
+
+**Frontend:** React 18, React Router, Axios, Context API  
+**Backend:** Node.js, Express, Sequelize, JWT  
+**Database:** MySQL 8.0  
+**Testing:** Jest, Supertest, React Testing Library  
+**DevOps:** Docker, GitHub Actions, ESLint
 
 ## 📄 License
 

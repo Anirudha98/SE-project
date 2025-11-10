@@ -11,9 +11,10 @@ const Orders = () => {
     const fetchOrders = async () => {
       try {
         const data = await getMyOrders();
-        setOrders(data);
+        setOrders(data || []);
       } catch (err) {
-        setFetchError(err.response?.data?.message || "Failed to load orders.");
+        console.error("Error fetching orders:", err);
+        setFetchError(err.response?.data?.message || "Failed to load your orders.");
       } finally {
         setLoading(false);
       }
@@ -27,7 +28,8 @@ const Orders = () => {
     try {
       await downloadInvoice(orderId);
     } catch (err) {
-      const message = err.response?.data?.message || "Could not download invoice";
+      console.error("Error downloading invoice:", err);
+      const message = err.response?.data?.message || "Could not download invoice.";
       if (typeof window !== "undefined") {
         window.alert(message);
       }
@@ -58,39 +60,41 @@ const Orders = () => {
               <p>
                 <strong>Order #{order.id}</strong>
               </p>
-              <p>Status: {order.status}</p>
+              <p>Status: {order.status || "Pending"}</p>
             </div>
             <div style={{ textAlign: "right" }}>
-              <p>Total: ${Number(order.total).toFixed(2)}</p>
-              <p>{new Date(order.createdAt).toLocaleDateString()}</p>
+              <p>Total: ₹{Number(order.totalAmount || order.total || 0).toFixed(2)}</p>
+              <p>{order.createdAt ? new Date(order.createdAt).toLocaleDateString() : ""}</p>
             </div>
           </div>
-          {order.items && (
+
+          {order.items && order.items.length > 0 && (
             <ul style={styles.itemList}>
               {order.items.map((item) => (
                 <li key={item.id} style={styles.itemRow}>
                   <span>
-                    {item.name} (x{item.qty})
+                    {item.name || item.Product?.name} (x{item.qty || item.quantity})
                   </span>
-                  <span>${Number(item.lineTotal).toFixed(2)}</span>
+                  <span>₹{Number(item.lineTotal || item.price || 0).toFixed(2)}</span>
                 </li>
               ))}
-          </ul>
-        )}
-        <div style={styles.actions}>
-          <button
-            onClick={() => handleInvoiceDownload(order.id)}
-            style={{
-              ...styles.button,
-              opacity: downloadingId === order.id ? 0.7 : 1,
-            }}
-            disabled={downloadingId === order.id}
-            aria-busy={downloadingId === order.id}
-          >
-            {downloadingId === order.id ? "Downloading..." : "Download Invoice"}
-          </button>
+            </ul>
+          )}
+
+          <div style={styles.actions}>
+            <button
+              onClick={() => handleInvoiceDownload(order.id)}
+              style={{
+                ...styles.button,
+                opacity: downloadingId === order.id ? 0.7 : 1,
+              }}
+              disabled={downloadingId === order.id}
+              aria-busy={downloadingId === order.id}
+            >
+              {downloadingId === order.id ? "Downloading..." : "Download Invoice"}
+            </button>
+          </div>
         </div>
-      </div>
       ))}
     </div>
   );
@@ -111,6 +115,8 @@ const styles = {
     borderRadius: "8px",
     padding: "15px",
     marginBottom: "20px",
+    backgroundColor: "#fff",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
   },
   header: {
     display: "flex",
@@ -130,6 +136,7 @@ const styles = {
   },
   actions: {
     textAlign: "right",
+    marginTop: "10px",
   },
   button: {
     padding: "8px 12px",

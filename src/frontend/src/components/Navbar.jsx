@@ -15,6 +15,8 @@ const Navbar = () => {
     navigate("/");
   };
 
+  const userRole = user?.role || "buyer";
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -35,9 +37,16 @@ const Navbar = () => {
             Cart
             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           </Link>
-          {isAuthenticated && (
+
+          {/* Role-based links */}
+          {isAuthenticated && userRole === "buyer" && (
             <Link to="/orders" className="nav-link">
               Orders
+            </Link>
+          )}
+          {isAuthenticated && userRole === "artisan" && (
+            <Link to="/dashboard" className="nav-link">
+              Dashboard
             </Link>
           )}
         </div>
@@ -47,7 +56,7 @@ const Navbar = () => {
             <>
               <span className="user-greeting">
                 <span className="user-icon">👤</span>
-                Hi, {user?.name || "Guest"}
+                Hi, {user?.name || "User"}
               </span>
               <button onClick={handleLogout} className="logout-btn">
                 Logout

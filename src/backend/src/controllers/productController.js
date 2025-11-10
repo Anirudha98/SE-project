@@ -20,3 +20,18 @@ exports.addProduct = async (req, res) => {
     res.status(500).json({ message: 'Error adding product', error });
   }
 };
+
+exports.searchProducts = async (req, res) => {
+  try {
+    const { q, category } = req.query;
+    const where = {};
+
+    if (q) where.name = { [Op.like]: `%${q}%` };
+    if (category) where.category = category;
+
+    const products = await Product.findAll({ where });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: "Search failed", error: err.message });
+  }
+};

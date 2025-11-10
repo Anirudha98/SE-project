@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const Product = require('../models/productModel');
 
 exports.getProducts = async (req, res) => {

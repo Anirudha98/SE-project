@@ -64,6 +64,7 @@ This repository contains the source code and documentation for the Online Market
 4. **Setup Backend**
    ```bash
    cd src/backend
+   copy .env.example .env
    npm install
    node server.js
    ```

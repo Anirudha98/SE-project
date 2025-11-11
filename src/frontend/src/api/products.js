@@ -1,4 +1,4 @@
-import { get, post, patch, put } from './client';
+import { get, post, patch } from './client';
 
 export const addProduct = async (data) => {
   return post('/products', data);

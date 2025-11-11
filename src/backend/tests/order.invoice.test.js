@@ -33,7 +33,10 @@ jest.mock('../src/middleware/auth', () => {
   authenticate.setUser = (user) => {
     authenticate.mockUser = user;
   };
-  return { authenticate };
+  const authorizeRoles = (...allowedRoles) => (req, res, next) => {
+    next();
+  };
+  return { authenticate, authorizeRoles };
 });
 
 const request = require('supertest');

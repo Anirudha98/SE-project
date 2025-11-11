@@ -18,6 +18,7 @@ jest.mock('../src/models/productModel', () => ({
   findAndCountAll: jest.fn(),
   create: jest.fn(),
   hasMany: jest.fn(),
+  belongsTo: jest.fn(),
 }));
 
 const request = require('supertest');

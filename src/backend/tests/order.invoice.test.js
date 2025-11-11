@@ -19,6 +19,7 @@ jest.mock('../src/models/OrderItem', () => ({
 
 jest.mock('../src/models/productModel', () => ({
   hasMany: jest.fn(),
+  belongsTo: jest.fn(),
 }));
 
 jest.mock('../src/utils/invoice', () => ({

@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "scripts": {
+    "install-all": "npm install --prefix src/backend && npm install --prefix src/frontend",
+    "start": "concurrently \"npm start --prefix src/backend\" \"npm start --prefix src/frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}
